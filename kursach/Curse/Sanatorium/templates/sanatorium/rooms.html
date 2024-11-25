@@ -1,0 +1,18 @@
+{% extends 'sanatorium/base.html' %}
+{% block content %}
+    {% for type in type %}
+        <h1>{{type.name}}</h1>
+        <p>{{type.description}}</p>
+        <div class="room">
+        {% for r in room%}
+            {% if r.type == type%}
+                <p>{{r.type}}</p>
+                {% if r.image%}
+                    <img src = "{{ r.image.url }}" alt = "connect" style="max-height:300px">
+                {%endif%}
+
+            {%endif%}
+        {%endfor%}
+        </div>
+    {% endfor %}
+{% endblock %}
