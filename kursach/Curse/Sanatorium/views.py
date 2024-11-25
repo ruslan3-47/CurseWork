@@ -2,14 +2,17 @@ from lib2to3.fixes.fix_input import context
 
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
+
+from .forms import AddUsersForm
 from .models import *
 # Create your views here.
 
 
-menu = [{'title' : "Главная страница", 'url' : "MainPage"},
-        {'title' : "Комнаты", 'url' : "Rooms"},
-        {'title' : "Бронь", 'url' : "Booking"},
-        {'title' : "О нас", 'url' : "About"}
+menu = [{'title' : "Главная страница", 'url' : "mainpage"},
+        {'title' : "Комнаты", 'url' : "rooms"},
+        {'title' : "Бронь", 'url' : "booking"},
+        {'title' : "О нас", 'url' : "about"},
+        {'title': "Зарегистрироваться", 'url': "addusers"}
         ]
 def index(request):
     return render(request,'sanatorium/index.html',{'menu':menu, 'title':"Новая Заря"})
@@ -31,4 +34,23 @@ def rooms(request):
 def booking(request):
     return render(request,'sanatorium/booking.html',{'menu':menu, 'title':"Новая Заря"})
 
+def show_room(request,room_slug):
+    room = get_object_or_404(Room, slug = room_slug)
+    decsroom = Room.objects.all()
+    context = {
+        'menu': menu,
+        'title': "Новая Заря",
+        "room_slug": room,
+        "room" : decsroom,
 
+    }
+    return render(request, 'sanatorium/show_room.html', context= context)
+
+def addusers(request):
+    if request.method  == 'POST':
+        form = AddUsersForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+    else:
+        form = AddUsersForm()
+    return render(request,'sanatorium/addusers.html', {'title': 'Новая Заря','form': form})

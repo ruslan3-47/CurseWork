@@ -1,0 +1,23 @@
+{% extends 'sanatorium/base.html' %}
+{% block content %}
+{%for r in room%}
+    {%if r.pk == room_slug.pk%}
+    <div class="room">
+
+
+                <h1>"{{r.type.name}}" комната номер -  {{r.pk}}</h1>
+                <p>{{r.type.description}}</p>
+                {%if r.image%}
+                    <img src="{{r.image.url}}">
+
+            {%endif%}
+
+    </div>
+    <div class="price_ordering">
+
+            <p>{{r.type.price}}</p>
+            <p>тут будет кнопка оформить</p>
+    </div>
+{%endif%}
+{%endfor%}
+{% endblock %}

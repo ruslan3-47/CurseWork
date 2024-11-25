@@ -4,15 +4,13 @@
         <h1>{{type.name}}</h1>
         <p>{{type.description}}</p>
         <div class="room">
-        {% for r in room%}
-            {% if r.type == type%}
-                <p>{{r.type}}</p>
-                {% if r.image%}
-                    <img src = "{{ r.image.url }}" alt = "connect" style="max-height:300px">
+            {% for r in room%}
+                {% if r.type == type%}
+                    {% if r.image%}
+                        <a href="{{r.get_absolute_url}}"><img src = "{{ r.image.url }}" alt = "connect" style="max-height:300px"></a>
+                    {%endif%}
                 {%endif%}
-
-            {%endif%}
-        {%endfor%}
+            {%endfor%}
         </div>
     {% endfor %}
 {% endblock %}
