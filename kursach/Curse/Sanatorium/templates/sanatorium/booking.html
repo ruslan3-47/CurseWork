@@ -1,5 +1,7 @@
 {% extends 'sanatorium/base.html' %}
 {% block content %}
-
-    <p>тут кул стори про сатанорий</p>
+    {% for program in program%}
+        <h2><a href="{{program.get_absolute_url}}">{{program.name}}</a></h2>
+        <p>{{program.briefly_description}}</p>
+    {% endfor %}
 {% endblock %}

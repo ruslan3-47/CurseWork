@@ -2,7 +2,7 @@
 {% block content %}
     {% for type in type %}
         <h1>{{type.name}}</h1>
-        <p>{{type.description}}</p>
+        <p>{{type.brify_description}}</p>
         <div class="room">
             {% for r in room%}
                 {% if r.type == type%}

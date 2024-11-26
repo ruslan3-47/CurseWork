@@ -2,6 +2,8 @@ from django.db import models
 from datetime import date
 
 from django.urls import reverse
+from django.utils.text import slugify
+from numpy.ma.extras import unique
 
 
 # Create your models here.
@@ -32,13 +34,14 @@ class Users(models.Model):
 class Room(models.Model):
     type = models.ForeignKey('Type',on_delete=models.CASCADE, verbose_name="Тип комнаты")
     image = models.ImageField(upload_to="media/", blank = True,default="media/mask")
+    is_order = models.BooleanField(verbose_name="занят", default=False)
     slug = models.SlugField(max_length= 255,unique=True, db_index=True, verbose_name="URL", null=True)
 
     def get_absolute_url(self):
         return reverse('room', kwargs={'room_slug':self.slug})
 
     def __str__(self):
-        return f'{self.pk} - {self.type}'
+        return f'{self.pk} - {self.type} - {self.is_order}'
 
     class Meta:
         verbose_name = "Комната"
@@ -48,9 +51,22 @@ class Room(models.Model):
 class Program(models.Model):
     name = models.CharField(verbose_name="Название программы", max_length=50)
     price = models.DecimalField(verbose_name="Цена", max_digits=15, decimal_places=2)
+    description = models.CharField(verbose_name="Описание",max_length=2000, null=True, default="Тут будет описание")
+    date = models.IntegerField(verbose_name="Дата проведения",null=True)
+    briefly_description = models.CharField(verbose_name="Краткое описание", max_length=1200, null=True, default="Краткое описание")
+    slug = models.SlugField(max_length=255,unique= True, db_index=True,verbose_name='URL', null=True)
+
+    def get_absolute_url(self):
+        return reverse('program', kwargs={'program_slug':self.slug})
+    
+    def save(self,*args,**kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args,**kwargs)
 
     def __str__(self):
-        return f'{self.name} - {self.price}'
+        return f'{self.name}'
+
 
     class Meta:
         verbose_name = "Программа"
@@ -61,6 +77,7 @@ class Type(models.Model):
     name = models.CharField(verbose_name="Тип комнаты", max_length=50)
     price = models.DecimalField(verbose_name="Цена за ночь", max_digits=15, decimal_places=2)
     description = models.CharField(verbose_name="Описание", max_length=1000, default="ничего")
+    brify_description = models.CharField(verbose_name="Краткое описание", max_length=300,default="кр опис")
 
     def __str__(self):
         return f'{self.name} - {self.price}'

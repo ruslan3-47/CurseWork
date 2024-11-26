@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
+from django.views.generic import ListView
 
 from .forms import AddUsersForm
 from .models import *
@@ -10,9 +11,10 @@ from .models import *
 
 
 menu = [{'title': "Главная страница", 'url': "mainpage"},
-        {'title': "Комнаты", 'url': "rooms"},
-        {'title': "Бронь", 'url': "booking"},
+        {'title': "Номера", 'url': "rooms"},
+        {'title': "Программы", 'url': "programs"},
         {'title': "О нас", 'url': "about"},
+        {'title':"Питание", 'url': "food" },
         {'title': "Зарегистрировать", 'url': "addusers"}
         ]
 
@@ -25,20 +27,29 @@ def about(request):
     return render(request, 'sanatorium/about.html', {'menu': menu, 'title': "Новая Заря"})
 
 
-def rooms(request):
-    type_room = Type.objects.all()
-    room = Room.objects.all()
+class Rooms(ListView):
+    model = Room
+    template_name = 'sanatorium/rooms.html'
+    context_object_name = 'room'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Новая Заря'
+        context['menu'] = menu
+        context['type'] = Type.objects.all()
+        return context
+
+    def get_queryset(self):
+        return Room.objects.filter(is_order = False)
+
+def booking(request):
+    program = Program.objects.all()
     context = {
         'menu': menu,
         'title': "Новая Заря",
-        "type": type_room,
-        "room": room,
+        'program': program
     }
-    return render(request, 'sanatorium/rooms.html', context=context)
-
-
-def booking(request):
-    return render(request, 'sanatorium/booking.html', {'menu': menu, 'title': "Новая Заря"})
+    return render(request, 'sanatorium/booking.html', context = context)
 
 
 def show_room(request, room_slug):
@@ -53,6 +64,16 @@ def show_room(request, room_slug):
     }
     return render(request, 'sanatorium/show_room.html', context=context)
 
+def show_program(request,program_slug):
+    program = get_object_or_404(Program,slug = program_slug)
+    descprog = Program.objects.all()
+    context = {
+        'menu': menu,
+        'title': "Новая Заря",
+        "program_slug": program,
+        "program": descprog,
+    }
+    return render(request,'sanatorium/show_program.html', context = context)
 
 def addusers(request):
     if request.method == 'POST':
@@ -68,3 +89,5 @@ def addusers(request):
         form = AddUsersForm()
     return render(request, 'sanatorium/addusers.html', {'title': 'Новая Заря', 'form': form})
 
+def food(request):
+    return render(request, 'sanatorium/food.html',{'title': 'Новая Заря','menu':menu})

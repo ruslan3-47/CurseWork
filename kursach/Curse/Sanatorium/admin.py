@@ -8,4 +8,3 @@ admin.site.register(Program)
 admin.site.register(Type)
 
 
-
