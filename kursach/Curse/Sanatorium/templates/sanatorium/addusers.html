@@ -6,10 +6,11 @@
     <h>{{title}}</h>
 </head>
 <body>
-  <p>Заполните данные</p>
-  <form action="{%url 'addusers'%}" method="post">
-    {%csrf_token%}
-    {{ form.as_p}}
-  </form>
+<p>Заполните данные</p>
+    <form action="{%url 'addusers'%}" method="post">
+        {%csrf_token%}
+        {{ form.as_p}}
+        <button type="submit">Добавить</button>
+    </form>
 </body>
 </html>

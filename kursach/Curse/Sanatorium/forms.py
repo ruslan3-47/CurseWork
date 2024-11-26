@@ -1,13 +1,18 @@
 from django import forms
 from .models import Program
 from .models import Room
+from .models import Users
 
-class AddUsersForm(forms.Form):
-    last_name = forms.CharField(label = "Фамилия", max_length=50)
-    first_name = forms.CharField(label='Имя', max_length=50)
-    middle_name = forms.CharField(label='Отчество', max_length=50)
-    email = forms.EmailField(label='e-mail')
-    birth_date = forms.DateField(label='Дата рождения')
-    is_in = forms.BooleanField(label='Заселен', required=False, initial=True)
-    program = forms.ModelChoiceField(label='Программа',queryset=Program.objects.all(), empty_label='Не выбрана')
-    room = forms.ModelChoiceField(label = 'Комната', queryset=Room.objects.all(), empty_label='Не выбрана')
+
+class AddUsersForm(forms.ModelForm):
+
+    class Meta:
+        model = Users
+        fields = ['last_name','first_name','middle_name','email','birth_date','date_in','date_out', 'is_in','program','room']
+
+    def __init__(self, *args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.fields['room'].empty_label = "не выбрана"
+        self.fields['program'].empty_label = "не выбрана"
+
+
