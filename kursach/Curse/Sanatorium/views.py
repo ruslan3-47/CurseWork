@@ -3,9 +3,13 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
+from django.views.generic import TemplateView
+from django.views.generic import DetailView
+from matplotlib.style.core import context
 
 from .forms import AddUsersForm
 from .models import *
+from .utils import DataMixin
 
 # Create your views here.
 
@@ -18,62 +22,73 @@ menu = [{'title': "Главная страница", 'url': "mainpage"},
         {'title': "Зарегистрировать", 'url': "addusers"}
         ]
 
+class Homepage(DataMixin,TemplateView):
+    template_name = 'sanatorium/index.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context,**c_def}
 
-def index(request):
-    return render(request, 'sanatorium/index.html', {'menu': menu, 'title': "Новая Заря"})
+
+class About(DataMixin,TemplateView):
+    template_name = 'sanatorium/about.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context,**c_def}
 
 
-def about(request):
-    return render(request, 'sanatorium/about.html', {'menu': menu, 'title': "Новая Заря"})
-
-
-class Rooms(ListView):
+class Rooms(DataMixin,ListView):
     model = Room
     template_name = 'sanatorium/rooms.html'
     context_object_name = 'room'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Новая Заря'
-        context['menu'] = menu
-        context['type'] = Type.objects.all()
-        return context
+        c_def = self.get_user_context(type =Type.objects.all() )
+        return {**context,**c_def}
 
     def get_queryset(self):
         return Room.objects.filter(is_order = False)
 
-def booking(request):
-    program = Program.objects.all()
-    context = {
-        'menu': menu,
-        'title': "Новая Заря",
-        'program': program
-    }
-    return render(request, 'sanatorium/booking.html', context = context)
+class Program_html(DataMixin,ListView):
+    model = Program
+    template_name = 'sanatorium/booking.html'
+    context_object_name = 'program'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def =  self.get_user_context()
+        return {**context,**c_def}
 
 
-def show_room(request, room_slug):
-    room = get_object_or_404(Room, slug=room_slug)
-    decsroom = Room.objects.all()
-    context = {
-        'menu': menu,
-        'title': "Новая Заря",
-        "room_slug": room,
-        "room": decsroom,
+class ShowRoom(DataMixin,DetailView):
+    model = Room
+    template_name = 'sanatorium/show_room.html'
+    context_object_name = 'room'
 
-    }
-    return render(request, 'sanatorium/show_room.html', context=context)
+    def get_object(self, queryset=None):
+        return get_object_or_404(Room,slug = self.kwargs['room_slug'])
 
-def show_program(request,program_slug):
-    program = get_object_or_404(Program,slug = program_slug)
-    descprog = Program.objects.all()
-    context = {
-        'menu': menu,
-        'title': "Новая Заря",
-        "program_slug": program,
-        "program": descprog,
-    }
-    return render(request,'sanatorium/show_program.html', context = context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(desc_room = Room.objects.all())
+        return {**context,**c_def}
+
+
+class Show_program(DataMixin,DetailView):
+    model = Program
+    template_name = 'sanatorium/show_program.html'
+    context_object_name = 'program'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Program, slug =self.kwargs['program_slug'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(desc_program = Program.objects.all())
+        return {**context,**c_def}
+
 
 def addusers(request):
     if request.method == 'POST':
@@ -89,5 +104,11 @@ def addusers(request):
         form = AddUsersForm()
     return render(request, 'sanatorium/addusers.html', {'title': 'Новая Заря', 'form': form})
 
-def food(request):
-    return render(request, 'sanatorium/food.html',{'title': 'Новая Заря','menu':menu})
+
+class Food(DataMixin,TemplateView):
+    template_name = 'sanatorium/food.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context,**c_def}

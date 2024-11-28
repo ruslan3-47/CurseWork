@@ -1,11 +1,11 @@
 {% extends 'sanatorium/base.html' %}
 {% block content %}
-    {%for program in program%}
-        {%if program.pk == program_slug.pk%}
-            <h1>{{program.name}}</h1>
-            <p>{{program.description}}</p>
-            <p>{{program.date}}дн.</p>
-            <p>{{program.price}}</p>
+    {%for prog in desc_program%}
+        {%if prog.pk == program.pk%}
+            <h1>{{prog.name}}</h1>
+            <p>{{prog.description}}</p>
+            <p>{{prog.date}}дн.</p>
+            <p>{{prog.price}}</p>
         {%endif%}
     {%endfor%}
 {% endblock %}

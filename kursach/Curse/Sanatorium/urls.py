@@ -3,12 +3,12 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('mainpage/', index, name="mainpage"),
+    path('mainpage/', Homepage.as_view(), name="mainpage"),
     path('rooms/', Rooms.as_view(), name="rooms"),
-    path('program/', booking, name="programs"),
-    path('program/<slug:program_slug>',show_program, name = "program"),
-    path('about/', about, name="about"),
-    path('rooms/<slug:room_slug>', show_room, name="room"),
+    path('program/', Program_html.as_view(), name="programs"),
+    path('program/<slug:program_slug>',Show_program.as_view(), name = "program"),
+    path('about/', About.as_view(), name="about"),
+    path('rooms/<slug:room_slug>', ShowRoom.as_view(), name="room"),
     path('addusers/', addusers, name='addusers'),
-    path('food/', food, name = 'food')
+    path('food/', Food.as_view(), name = 'food')
 ]
