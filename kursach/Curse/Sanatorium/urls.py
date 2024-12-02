@@ -10,5 +10,9 @@ urlpatterns = [
     path('about/', About.as_view(), name="about"),
     path('rooms/<slug:room_slug>', ShowRoom.as_view(), name="room"),
     path('addusers/', addusers, name='addusers'),
-    path('food/', Food.as_view(), name = 'food')
+    path('food/', Food.as_view(), name = 'food'),
+    path('register/',RegisteUsers.as_view() , name = 'register'),
+    path('login/',LoginUsers.as_view(),name = 'login'),
+    path ('logout/', logout_user, name = 'logout')
+    #homepage user
 ]

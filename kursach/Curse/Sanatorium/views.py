@@ -1,13 +1,11 @@
+from django.contrib.auth import logout, login
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import LoginView
+from django.shortcuts import render,get_object_or_404,redirect
+from django.urls import reverse_lazy
+from django.views.generic import ListView,CreateView,TemplateView,DetailView
 
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.shortcuts import get_object_or_404
-from django.views.generic import ListView
-from django.views.generic import TemplateView
-from django.views.generic import DetailView
-from matplotlib.style.core import context
-
-from .forms import AddUsersForm
+from .forms import AddUsersForm, RegisterUserForm, LoginUserForm
 from .models import *
 from .utils import DataMixin
 
@@ -112,3 +110,38 @@ class Food(DataMixin,TemplateView):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context()
         return {**context,**c_def}
+
+
+class RegisteUsers (DataMixin, CreateView):
+    form_class =  RegisterUserForm
+    template_name = 'sanatorium/register.html'
+    success_url = reverse_lazy('login')
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect('mainpage')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title = "Регистрация")
+        return {**context,**c_def}
+
+
+class LoginUsers (DataMixin,LoginView):
+    form_class = LoginUserForm
+    template_name = 'sanatorium/login.html'
+
+    def get_success_url(self):
+        return reverse_lazy('mainpage')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title="Авторизация")
+        return {**context, **c_def}
+
+def logout_user(request):
+    logout(request)
+    return redirect('login')
+
+#Добавить класс для  пользователя его homepage

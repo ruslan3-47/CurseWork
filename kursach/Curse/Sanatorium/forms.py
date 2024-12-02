@@ -1,6 +1,7 @@
 from django import forms
-from .models import Program
-from .models import Room
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
+
 from .models import Users
 
 
@@ -16,3 +17,16 @@ class AddUsersForm(forms.ModelForm):
         self.fields['program'].empty_label = "не выбрана"
 
 
+class RegisterUserForm(UserCreationForm):
+    username = forms.CharField(label='Логин')
+    email = forms.EmailField(label='E-mail')
+    password1 = forms.CharField(label='Пароль', widget=forms.PasswordInput())
+    password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput())
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+
+
+class LoginUserForm(AuthenticationForm):
+    username = forms.CharField(label="Логин", widget=forms.TextInput())
+    password = forms.CharField(label='Пароль', widget= forms.PasswordInput())

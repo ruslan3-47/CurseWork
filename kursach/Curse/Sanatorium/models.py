@@ -85,3 +85,5 @@ class Type(models.Model):
     class Meta:
         verbose_name = "Тип"
         verbose_name_plural = "Типы"
+
+#add model for user
