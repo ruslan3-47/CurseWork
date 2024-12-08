@@ -2,20 +2,32 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
-from .models import Users
+from .models import *
 
 
 class AddUsersForm(forms.ModelForm):
 
     class Meta:
         model = Users
-        fields = ['last_name','first_name','middle_name','email','birth_date','date_in','date_out', 'is_in','program','room']
+        fields = ['last_name','first_name','middle_name','email','birth_date']
 
     def __init__(self, *args,**kwargs):
         super().__init__(*args,**kwargs)
         self.fields['room'].empty_label = "не выбрана"
         self.fields['program'].empty_label = "не выбрана"
 
+class OrderingForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['program_name','room_id','date_in','date_out','price']
+        widgets = {
+            'date_in': forms.DateInput(attrs={'type':'date'}),
+            'date_out':forms.DateInput(attrs={'type':'date'}),
+        }
+    def __init__(self, *args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.fields['room_id'].queryset = Room.objects.all()
+        self.fields['program_name'].queryset = Program.objects.all()
 
 class RegisterUserForm(UserCreationForm):
     username = forms.CharField(label='Логин')

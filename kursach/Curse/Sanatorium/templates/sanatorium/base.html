@@ -12,7 +12,7 @@
             <li><a href="{% url m.url %}">{{ m.title }}</a></li>
         {% endfor %}
         {% if request.user.is_authenticated%}
-        <li><a href="">{{user.username}}</a>| <a href="{% url 'logout'%}">Выйти</a></li>
+        <li><a href="{% url 'usershome' %}">{{user.username}}</a>| <a href="{% url 'logout'%}">Выйти</a></li>
         {% else %}
             <li>
                 <a href="{% url 'register' %}">Регистрация</a>| <a href="{% url 'login'%}">Войти</a>

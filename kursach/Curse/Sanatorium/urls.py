@@ -13,6 +13,8 @@ urlpatterns = [
     path('food/', Food.as_view(), name = 'food'),
     path('register/',RegisteUsers.as_view() , name = 'register'),
     path('login/',LoginUsers.as_view(),name = 'login'),
-    path ('logout/', logout_user, name = 'logout')
+    path ('logout/', logout_user, name = 'logout'),
+    path ('user/',UsersHome.as_view(),name = 'usershome'),
+    path('order/', OrderingProgram.as_view(),name = 'ordering'),
     #homepage user
 ]

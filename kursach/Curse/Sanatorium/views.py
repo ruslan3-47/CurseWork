@@ -5,20 +5,11 @@ from django.shortcuts import render,get_object_or_404,redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView,CreateView,TemplateView,DetailView
 
-from .forms import AddUsersForm, RegisterUserForm, LoginUserForm
+from .forms import AddUsersForm, RegisterUserForm, LoginUserForm, OrderingForm
 from .models import *
 from .utils import DataMixin
 
 # Create your views here.
-
-
-menu = [{'title': "Главная страница", 'url': "mainpage"},
-        {'title': "Номера", 'url': "rooms"},
-        {'title': "Программы", 'url': "programs"},
-        {'title': "О нас", 'url': "about"},
-        {'title':"Питание", 'url': "food" },
-        {'title': "Зарегистрировать", 'url': "addusers"}
-        ]
 
 class Homepage(DataMixin,TemplateView):
     template_name = 'sanatorium/index.html'
@@ -88,6 +79,8 @@ class Show_program(DataMixin,DetailView):
         return {**context,**c_def}
 
 
+
+
 def addusers(request):
     if request.method == 'POST':
         form = AddUsersForm(request.POST)
@@ -112,8 +105,22 @@ class Food(DataMixin,TemplateView):
         return {**context,**c_def}
 
 
+class OrderingProgram(DataMixin, CreateView):
+    model = Order
+    form_class = OrderingForm
+    template_name = 'sanatorium/order.html'
+    success_url = '/orders/'
+
+    def form_valid(self, form):
+        form.instance.user_id = self.request.user
+        return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context,**c_def}
+
 class RegisteUsers (DataMixin, CreateView):
-    form_class =  RegisterUserForm
+    form_class = RegisterUserForm
     template_name = 'sanatorium/register.html'
     success_url = reverse_lazy('login')
 
@@ -133,15 +140,23 @@ class LoginUsers (DataMixin,LoginView):
     template_name = 'sanatorium/login.html'
 
     def get_success_url(self):
-        return reverse_lazy('mainpage')
+        return reverse_lazy('usershome')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Авторизация")
         return {**context, **c_def}
 
+
+
+class UsersHome(DataMixin,TemplateView):
+    template_name = 'sanatorium/user_lobby.html'
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context,**c_def}
 def logout_user(request):
     logout(request)
     return redirect('login')
 
-#Добавить класс для  пользователя его homepage
+"""class UserInfoAdd(DataMixin,CreateView):"""
