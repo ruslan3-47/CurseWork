@@ -14,6 +14,7 @@ urlpatterns = [
     path('register/',RegisteUsers.as_view() , name = 'register'),
     path('login/',LoginUsers.as_view(),name = 'login'),
     path ('logout/', logout_user, name = 'logout'),
+    path ('addinfo/',UserInfoAdd.as_view(),name = 'addinfo'),
     path ('user/',UsersHome.as_view(),name = 'usershome'),
     path('order/', OrderingProgram.as_view(),name = 'ordering'),
     #homepage user

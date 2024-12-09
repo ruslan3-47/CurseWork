@@ -19,7 +19,7 @@ class AddUsersForm(forms.ModelForm):
 class OrderingForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['program_name','room_id','date_in','date_out','price']
+        fields = ['program_name','room_id','date_in','date_out']
         widgets = {
             'date_in': forms.DateInput(attrs={'type':'date'}),
             'date_out':forms.DateInput(attrs={'type':'date'}),
@@ -42,3 +42,24 @@ class RegisterUserForm(UserCreationForm):
 class LoginUserForm(AuthenticationForm):
     username = forms.CharField(label="Логин", widget=forms.TextInput())
     password = forms.CharField(label='Пароль', widget= forms.PasswordInput())
+
+
+class ProfileEdit(forms.ModelForm):
+    class Meta:
+        model = Users
+        fields = ['first_name','last_name', 'middle_name', 'birth_date']
+        widgets = {
+            'birth_date': forms.DateInput(attrs={'type':'date'})
+        }
+
+        def __init__(self, *args, **kwargs):
+            self.user = kwargs.pop('user', None)
+            super().__init__(*args, **kwargs)
+
+        def save(self,commit = True):
+            instance = super().save(commit=False)
+            if self.user:
+                instance.email = self.user.email
+            if commit:
+                instance.save()
+            return instance

@@ -1,14 +1,16 @@
+from tkinter.constants import CASCADE
+
 from django.db import models
 from datetime import date
 
 from django.urls import reverse
 from django.utils.text import slugify
-from numpy.ma.extras import unique
-
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 class Users(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,default=1)
     first_name = models.CharField(verbose_name="Имя", max_length=50)
     last_name = models.CharField(verbose_name="Фамилия", max_length=50)
     middle_name = models.CharField(verbose_name="Отчество", max_length=50)
@@ -91,11 +93,11 @@ class Order(models.Model):
     user_id = models.ForeignKey('Users', verbose_name="Клиент", null=True, blank=True, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        date = (self.date_out - self.date_in).days
-
-        program_price = self.program_name.price
-        room_price = self.room_id.type.price
-        self.price = program_price + (room_price * date)
+        if self.date_in and self.date_out and self.program_name and self.room_id:
+            date = (self.date_out - self.date_in).days
+            program_price = self.program_name.price
+            room_price = self.room_id.type.price
+            self.price = program_price + (room_price * date)
 
         return super(Order, self).save(*args, **kwargs)
 

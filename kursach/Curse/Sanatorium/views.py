@@ -1,11 +1,11 @@
-from django.contrib.auth import logout, login
+from django.contrib.auth import logout, login, get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render,get_object_or_404,redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView,CreateView,TemplateView,DetailView
+from django.views.generic import ListView, CreateView, TemplateView, DetailView, UpdateView
 
-from .forms import AddUsersForm, RegisterUserForm, LoginUserForm, OrderingForm
+from .forms import AddUsersForm, RegisterUserForm, LoginUserForm, OrderingForm, ProfileEdit
 from .models import *
 from .utils import DataMixin
 
@@ -37,8 +37,6 @@ class Rooms(DataMixin,ListView):
         c_def = self.get_user_context(type =Type.objects.all() )
         return {**context,**c_def}
 
-    def get_queryset(self):
-        return Room.objects.filter(is_order = False)
 
 class Program_html(DataMixin,ListView):
     model = Program
@@ -78,9 +76,6 @@ class Show_program(DataMixin,DetailView):
         c_def = self.get_user_context(desc_program = Program.objects.all())
         return {**context,**c_def}
 
-
-
-
 def addusers(request):
     if request.method == 'POST':
         form = AddUsersForm(request.POST)
@@ -109,15 +104,42 @@ class OrderingProgram(DataMixin, CreateView):
     model = Order
     form_class = OrderingForm
     template_name = 'sanatorium/order.html'
-    success_url = '/orders/'
+    success_url = reverse_lazy('mainpage')
 
     def form_valid(self, form):
-        form.instance.user_id = self.request.user
-        return super().form_valid(form)
+        form.instance.user_id = self.request.user.users
+        self.calculate_total_cost(form)
+        response = super().form_valid(form)
+        self.object = form.instance
+        return response
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context()
+        c_def = self.get_user_context(total_cost = self.object.price if self.object else None)
         return {**context,**c_def}
+
+    def calculate_total_cost(self, form):
+        # Извлекаем данные из формы
+        program_name = form.cleaned_data['program_name']
+        room_id = form.cleaned_data['room_id']
+        date_in = form.cleaned_data['date_in']
+        date_out = form.cleaned_data['date_out']
+        # Вычисляем количество дней
+        date = (date_out - date_in).days
+        # Вычисляем общую стоимость
+        program_price = program_name.price
+        room_price = room_id.type.price
+        total_cost = program_price + (room_price * date)
+        # Устанавливаем общую стоимость на экземпляре формы
+        form.instance.total_cost = total_cost
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
 
 class RegisteUsers (DataMixin, CreateView):
     form_class = RegisterUserForm
@@ -126,8 +148,9 @@ class RegisteUsers (DataMixin, CreateView):
 
     def form_valid(self, form):
         user = form.save()
+        Users.objects.create(user = user)
         login(self.request, user)
-        return redirect('mainpage')
+        return redirect('addinfo')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -140,13 +163,25 @@ class LoginUsers (DataMixin,LoginView):
     template_name = 'sanatorium/login.html'
 
     def get_success_url(self):
-        return reverse_lazy('usershome')
+        user = self.request.user
+        try:
+            user_profile = Users.objects.get(user=user)
+            if user_profile.first_name and user_profile.last_name and user_profile.middle_name and user_profile.birth_date and user_profile.email:
+                return reverse_lazy('mainpage')
+            else:
+                return reverse_lazy('addinfo')
+        except Users.DoesNotExist:
+            return reverse_lazy('addinfo')
+
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(title="Авторизация")
         return {**context, **c_def}
 
+def logout_user(request):
+    logout(request)
+    return redirect('login')
 
 
 class UsersHome(DataMixin,TemplateView):
@@ -155,8 +190,12 @@ class UsersHome(DataMixin,TemplateView):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context()
         return {**context,**c_def}
-def logout_user(request):
-    logout(request)
-    return redirect('login')
 
-"""class UserInfoAdd(DataMixin,CreateView):"""
+
+class UserInfoAdd(DataMixin,UpdateView):
+    model = Users
+    form_class = ProfileEdit
+    template_name = 'sanatorium/addmoreinfo.html'
+    success_url = reverse_lazy('usershome')
+    def get_object(self, queryset=None):
+        return self.request.user.users
