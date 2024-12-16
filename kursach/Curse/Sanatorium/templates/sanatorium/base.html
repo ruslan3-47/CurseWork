@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
     <meta charset="UTF-8">
+    {%load static%}
+    <link type = "text/css" href="{% static 'sanatorium/css/style.css' %}" rel ="stylesheet"/>
+
     <title>{{ title }}</title>
 </head>
 <body>
     <h1>Sanatorium - "Новая заря"</h1>
     {% block mainmenu %}
-    <ul>
+    <ul class="menu-tab">
         {% for m in menu %}
-            <li><a href="{% url m.url %}">{{ m.title }}</a></li>
+            <li><a href="{% url m.url %}"><h3>{{ m.title }}</h3></a></li>
         {% endfor %}
         {% if request.user.is_authenticated%}
         <li><a href="{% url 'usershome' %}">{{user.username}}</a>| <a href="{% url 'logout'%}">Выйти</a></li>

@@ -1,4 +1,3 @@
-from tkinter.constants import CASCADE
 
 from django.db import models
 from datetime import date
@@ -10,22 +9,19 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Users(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE,default=1)
-    first_name = models.CharField(verbose_name="Имя", max_length=50)
-    last_name = models.CharField(verbose_name="Фамилия", max_length=50)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     middle_name = models.CharField(verbose_name="Отчество", max_length=50)
-    email = models.EmailField(verbose_name="e-mail", blank=True)
     birth_date = models.DateField(verbose_name="День рождения", default=date(2000, 1, 1))
     create_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="Дата изменения ", auto_now=True)
 
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return f'{self.user.first_name} {self.user.last_name}'
 
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
-        ordering = ['last_name', 'first_name']
+        ordering = ['user__last_name', 'user__first_name']
 
 
 class Room(models.Model):

@@ -5,7 +5,7 @@ from django.shortcuts import render,get_object_or_404,redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, TemplateView, DetailView, UpdateView
 
-from .forms import AddUsersForm, RegisterUserForm, LoginUserForm, OrderingForm, ProfileEdit
+from .forms import RegisterUserForm, LoginUserForm, OrderingForm, ProfileEdit
 from .models import *
 from .utils import DataMixin
 
@@ -13,10 +13,25 @@ from .utils import DataMixin
 
 class Homepage(DataMixin,TemplateView):
     template_name = 'sanatorium/index.html'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context()
-        return {**context,**c_def}
+
+        # Проверяем, аутентифицирован ли пользователь
+        if self.request.user.is_authenticated:
+            try:
+                # Пытаемся получить объект Users, связанный с текущим пользователем
+                user_profile = Users.objects.get(user=self.request.user)
+            except Users.DoesNotExist:
+                # Если объект не существует, устанавливаем user_profile в None
+                user_profile = None
+        else:
+            # Если пользователь не аутентифицирован, user_profile также None
+            user_profile = None
+
+        # Передаем user_profile в контекст
+        c_def = self.get_user_context(user_profile=user_profile)
+        return {**context, **c_def}
 
 
 class About(DataMixin,TemplateView):
@@ -75,21 +90,6 @@ class Show_program(DataMixin,DetailView):
         context = super().get_context_data(**kwargs)
         c_def = self.get_user_context(desc_program = Program.objects.all())
         return {**context,**c_def}
-
-def addusers(request):
-    if request.method == 'POST':
-        form = AddUsersForm(request.POST)
-        if form.is_valid():
-            print(form.cleaned_data)
-            try:
-                Users.objects.create(**form.cleaned_data)
-                return redirect('mainpage')
-            except:
-                form.add_error(None, "Ошибка!")
-    else:
-        form = AddUsersForm()
-    return render(request, 'sanatorium/addusers.html', {'title': 'Новая Заря', 'form': form})
-
 
 class Food(DataMixin,TemplateView):
     template_name = 'sanatorium/food.html'
@@ -199,3 +199,8 @@ class UserInfoAdd(DataMixin,UpdateView):
     success_url = reverse_lazy('usershome')
     def get_object(self, queryset=None):
         return self.request.user.users
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # Передаем текущего пользователя в форму
+        return kwargs
