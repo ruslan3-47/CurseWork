@@ -166,7 +166,7 @@ class LoginUsers (DataMixin,LoginView):
         user = self.request.user
         try:
             user_profile = Users.objects.get(user=user)
-            if user_profile.first_name and user_profile.last_name and user_profile.middle_name and user_profile.birth_date and user_profile.email:
+            if user_profile.user.first_name and user_profile.user.last_name and user_profile.middle_name and user_profile.birth_date and user_profile.user.email:
                 return reverse_lazy('mainpage')
             else:
                 return reverse_lazy('addinfo')
@@ -188,7 +188,7 @@ class UsersHome(DataMixin,TemplateView):
     template_name = 'sanatorium/user_lobby.html'
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context()
+        c_def = self.get_user_context(user_profile = self.request.user)
         return {**context,**c_def}
 
 

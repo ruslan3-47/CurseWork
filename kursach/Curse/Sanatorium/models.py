@@ -10,13 +10,15 @@ from django.contrib.auth.models import User
 
 class Users(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    middle_name = models.CharField(verbose_name="Отчество", max_length=50)
+    first_name = models.CharField(verbose_name="Имя", blank= True, null =True, max_length=50)
+    last_name = models.CharField(verbose_name="Фамилия",blank = True, null=True, max_length=50)
+    middle_name = models.CharField(verbose_name="Отчество", max_length=50,blank = True, null=True)
     birth_date = models.DateField(verbose_name="День рождения", default=date(2000, 1, 1))
     create_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="Дата изменения ", auto_now=True)
 
     def __str__(self):
-        return f'{self.user.first_name} {self.user.last_name}'
+        return f'{self.first_name} {self.user.last_name}'
 
     class Meta:
         verbose_name = "Пользователь"
