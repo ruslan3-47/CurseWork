@@ -1,14 +1,16 @@
-from django.contrib.auth import logout, login, get_user_model
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import logout, login
+
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render,get_object_or_404,redirect
+from django.shortcuts import get_object_or_404,redirect
+
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, TemplateView, DetailView, UpdateView
+
 
 from .forms import RegisterUserForm, LoginUserForm, OrderingForm, ProfileEdit
 from .models import *
 from .utils import DataMixin
-
+from .filter import *
 # Create your views here.
 
 class Homepage(DataMixin,TemplateView):
@@ -150,7 +152,7 @@ class RegisteUsers (DataMixin, CreateView):
         user = form.save()
         Users.objects.create(user = user)
         login(self.request, user)
-        return redirect('addinfo')
+        return redirect('mainpage')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -163,16 +165,7 @@ class LoginUsers (DataMixin,LoginView):
     template_name = 'sanatorium/login.html'
 
     def get_success_url(self):
-        user = self.request.user
-        try:
-            user_profile = Users.objects.get(user=user)
-            if user_profile.user.first_name and user_profile.user.last_name and user_profile.middle_name and user_profile.birth_date and user_profile.user.email:
-                return reverse_lazy('mainpage')
-            else:
-                return reverse_lazy('addinfo')
-        except Users.DoesNotExist:
-            return reverse_lazy('addinfo')
-
+         return reverse_lazy('mainpage')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -188,19 +181,43 @@ class UsersHome(DataMixin,TemplateView):
     template_name = 'sanatorium/user_lobby.html'
     def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
-        c_def = self.get_user_context(user_profile = self.request.user)
+        user_profile = get_object_or_404(Users, user=self.request.user)
+        c_def = self.get_user_context(user_profile = user_profile)
         return {**context,**c_def}
 
 
 class UserInfoAdd(DataMixin,UpdateView):
     model = Users
     form_class = ProfileEdit
-    template_name = 'sanatorium/addmoreinfo.html'
+    template_name = 'sanatorium/editProfile.html'
     success_url = reverse_lazy('usershome')
     def get_object(self, queryset=None):
         return self.request.user.users
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user  # Передаем текущего пользователя в форму
-        return kwargs
+class AdminViews(DataMixin,ListView):
+    template_name = "sanatorium/admiinpage.html"
+    model = Users
+    context_object_name = "user"
+    paginate_by = 20
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = self.get_queryset()
+
+        us_filter = UserFilter(self.request.GET,queryset)
+        pr_filter = ProgramFilter(self.request.GET, queryset=Program.objects.all(),prefix="program")
+        rm_filter = RoomFilter(self.request.GET, queryset=Room.objects.all(),prefix="room")
+        tp_filter = TypeFilter(self.request.GET, queryset=Type.objects.all(),prefix="type")
+        c_def = self.get_user_context(
+            program = pr_filter.qs,
+            room = rm_filter.qs,
+            type = tp_filter.qs,
+            us_filter= us_filter,
+            pr_filter=pr_filter,
+            rm_filter=rm_filter,
+            tp_filter = tp_filter)
+        return {**context,**c_def}
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        us_filter = UserFilter(self.request.GET,queryset)
+        return us_filter.qs

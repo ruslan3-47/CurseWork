@@ -1,0 +1,55 @@
+{% extends 'sanatorium/base.html' %}
+{% block content %}
+<div class="filters">
+    <form method="get" action="http://127.0.0.1:8000/Sanatorium/adminviews/">
+            {{ us_filter.form.as_p }}
+            <button type="submit">Искать</button>
+    </form>
+    <form method="get" action="http://127.0.0.1:8000/Sanatorium/adminviews/">
+        {{ pr_filter.form.as_p }}
+        <button type="submit">Искать</button>
+</form>
+    <form method="get" action="http://127.0.0.1:8000/Sanatorium/adminviews/">
+        {{ rm_filter.form.as_p }}
+        <button type="submit">Искать</button>
+</form>
+    <form method="get" action="http://127.0.0.1:8000/Sanatorium/adminviews/">
+        {{ tp_filter.form.as_p }}
+        <button type="submit">Искать</button>
+</form>
+</div>
+<div class = "lists">
+<div class = "userlist">
+    <ul>
+        <h2>Пользователи</h2>
+        {%for user in user%}
+        <li>{{user.first_name}} {{user.last_name}}</li>
+        {%endfor%}
+    </ul>
+</div>
+<div class="programlist">
+    <ul>
+        <h2>Программы</h2>
+        {%for prog in program%}
+        <li>{{prog.name}} {{prog.price}}</li>
+        {%endfor%}
+    </ul>
+</div>
+<div class = "roomlist">
+<ul>
+    <h2>Комнаты</h2>
+    {%for room in room%}
+    <li>{{room.pk}} {{room.type}}</li>
+    {%endfor%}
+</ul>
+</div>
+<div class="typelist">
+<ul>
+    <h2>Типы комнат</h2>
+    {%for type in type%}
+        <li>{{type.name}} {{type.price}}</li>
+        {%endfor%}
+</ul>
+</div>
+</div>
+{% endblock %}

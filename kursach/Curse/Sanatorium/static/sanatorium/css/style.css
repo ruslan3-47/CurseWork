@@ -4,12 +4,122 @@
     padding: 0;
     display: flex;
     justify-content:  space-around;
+    border: outset;
+
 }
 .menu-tab li{
     margin: 0;
+
 }
 .menu-tab li a{
     text-decoration: none;
     color: #333;
     font-weight: bold;
 }
+.a:active,
+.a:hover,
+.a{
+    text-decoration: none;
+    color: #666;
+}
+.nameorg{
+    text-align: center;
+
+}
+body{
+    width: auto;
+}
+.blockcontent{
+    padding-left: 25%;
+    padding-right: 25%;
+    
+}
+.indextext{
+    font-family: Georgia;
+}
+.lists
+{
+    list-style-type: none;
+    margin:  0;
+    padding: 0;
+    display: flex;
+    justify-content:  space-around;
+    border: 2px outset;
+    display: flex;
+    
+    margin: 0;
+    padding: 0;
+}
+.lists ul{
+    
+    list-style-type: none;
+    padding: 5px;
+    margin: 0;
+}
+.userlist{
+    border: 2px outset;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+.userlist li{
+    border: 2px outset;
+    display: flex;
+    flex-direction: column;
+    font: 1rem;
+    
+}
+.programlist{
+    border: 2px outset;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+.programlist li{
+    border: 2px outset;
+    display: flex;
+    flex-direction: column;
+    font: 1rem;
+    
+}
+.roomlist{
+    border: 2px outset;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+.roomlist li{
+    border: 2px outset;
+    display: flex;
+    flex-direction: column;
+    font: 1rem;
+    
+}
+.typelist{
+    border: 2px outset;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+.typelist li{
+    border: 2px outset;
+    display: flex;
+    flex-direction: column;
+    font: 1rem;
+    
+}
+.filters{
+    list-style-type: none;
+    margin:  0;
+    padding: 0;
+    display: flex;
+    justify-content:  space-around;
+    border: 2px outset;
+    display: flex;
+    
+    margin: 0;
+    padding: 0;}

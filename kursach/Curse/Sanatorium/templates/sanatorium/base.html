@@ -9,22 +9,34 @@
     <title>{{ title }}</title>
 </head>
 <body>
-    <h1>Sanatorium - "Новая заря"</h1>
-    {% block mainmenu %}
+    <h1 class = "nameorg">Sanatorium - "Новая заря"</h1>
+    <div class = "menu">{% block mainmenu %}
     <ul class="menu-tab">
         {% for m in menu %}
             <li><a href="{% url m.url %}"><h3>{{ m.title }}</h3></a></li>
         {% endfor %}
+        {% if request.user.is_staff or request.user.is_superuser%}
+            <li>
+                <a href="http://127.0.0.1:8000/Sanatorium/adminviews/"><h3>Администрирование</h3></a>
+            </li>
+            <li><a href="{% url 'logout'%}">Выйти</a></li>
+        {%endif%}
         {% if request.user.is_authenticated%}
-        <li><a href="{% url 'usershome' %}">{{user.username}}</a>| <a href="{% url 'logout'%}">Выйти</a></li>
+            {%if not request.user.is_staff and not request.user.is_superuser%}
+            <li><a href="{% url 'usershome' %}">{{user.username}}</a>| <a href="{% url 'logout'%}">Выйти</a></li>
+            {%endif%}
         {% else %}
             <li>
                 <a href="{% url 'register' %}">Регистрация</a>| <a href="{% url 'login'%}">Войти</a>
             </li>
         {%endif%}
+        
     </ul>
     {% endblock mainmenu %}
+</div>
+<div class="blockcontent">
     {% block content %}
     {% endblock content %}
+</div>
 </body>
 </html>

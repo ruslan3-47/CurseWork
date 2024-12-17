@@ -1,7 +1,9 @@
 {% extends 'sanatorium/base.html' %}
 {% block content %}
+<div class = "program">
     {% for program in program%}
-        <h2><a href="{{program.get_absolute_url}}">{{program.name}}</a></h2>
+        <h2><a class = "name_program" href="{{program.get_absolute_url}}">{{program.name}}</a></h2>
         <p>{{program.briefly_description}}</p>
     {% endfor %}
+</div>
 {% endblock %}

@@ -13,7 +13,7 @@ class Users(models.Model):
     first_name = models.CharField(verbose_name="Имя", blank= True, null =True, max_length=50)
     last_name = models.CharField(verbose_name="Фамилия",blank = True, null=True, max_length=50)
     middle_name = models.CharField(verbose_name="Отчество", max_length=50,blank = True, null=True)
-    birth_date = models.DateField(verbose_name="День рождения", default=date(2000, 1, 1))
+    birth_date = models.DateField(verbose_name="Дата рождения", default=date(2000, 1, 1))
     create_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name="Дата изменения ", auto_now=True)
 
@@ -23,7 +23,7 @@ class Users(models.Model):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
-        ordering = ['user__last_name', 'user__first_name']
+        ordering = ['last_name', 'first_name']
 
 
 class Room(models.Model):
