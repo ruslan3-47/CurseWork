@@ -1,5 +1,6 @@
 {% extends 'sanatorium/base.html' %}
 {%block content%}
+<div class ="order">
 <h1>{{title}}</h1>
 <form method="post">
   {% csrf_token %}
@@ -7,4 +8,5 @@
   <p>Цена = {{ total_cost }}</p>
   <button type = "submit">Бронь</button>
 </form>
+</div>
 {%endblock%}

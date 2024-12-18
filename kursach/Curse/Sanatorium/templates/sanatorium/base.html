@@ -36,7 +36,19 @@
 </div>
 <div class="blockcontent">
     {% block content %}
+    
     {% endblock content %}
 </div>
+{% if page_obj.has_other_pages %} 
+<nav class="list-pages"> 
+    <ul> 
+        {% for p in paginator.page_range %} 
+        <li class="page-num"> 
+            <a href="?page={{ p }}">{{ p }}</a> 
+        </li> 
+        {% endfor %} 
+    </ul> 
+</nav> 
+{% endif %}
 </body>
 </html>

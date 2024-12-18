@@ -38,3 +38,55 @@ class ProfileEdit(forms.ModelForm):
         widgets = {
             'birth_date': forms.DateInput(attrs={'type':'date'})
         }
+
+class EditUser(forms.ModelForm):
+    class Meta:
+        model = Users
+        fields = ['first_name','last_name','middle_name','birth_date']
+        widgets = {
+            'birth_date': forms.DateInput(attrs={'type': 'date'})
+        }
+
+
+class EditProgram(forms.ModelForm):
+    class Meta:
+        model = Program
+        fields = ['name','price','description','briefly_description','date']
+
+
+class EditRoom(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = ['type','image','slug']
+
+
+class EditType(forms.ModelForm):
+    class Meta:
+        model = Type
+        fields = ['name','price','description','brify_description']
+
+class CreateUser(forms.ModelForm):
+    class Meta:
+        model = Users
+        fields = "__all__"
+        widgets = {
+            'birth_date': forms.DateInput(attrs={'type': 'date'})
+        }
+
+
+class CreateProgram(forms.ModelForm):
+    class Meta:
+        model = Program
+        fields = "__all__"
+
+
+class CreateRoom(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = "__all__"
+
+
+class CreateType(forms.ModelForm):
+    class Meta:
+        model = Type
+        fields = "__all__"

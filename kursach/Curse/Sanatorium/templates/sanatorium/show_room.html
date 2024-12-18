@@ -8,11 +8,9 @@
         {%if r.image%}
             <img src="{{r.image.url}}">
         {%endif%}
+        <p><strong>{{r.type.price}} руб.</p>
     </div>
-    <div class="price_ordering">
-        <p>{{r.type.price}}</p>
-        <p>тут будет кнопка оформить</p>
-    </div>
+
 {%endif%}
 {%endfor%}
 {% endblock %}

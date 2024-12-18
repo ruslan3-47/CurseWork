@@ -72,7 +72,7 @@ class Type(models.Model):
     name = models.CharField(verbose_name="Тип комнаты", max_length=50)
     price = models.DecimalField(verbose_name="Цена за ночь", max_digits=15, decimal_places=2)
     description = models.CharField(verbose_name="Описание", max_length=1000, default="ничего")
-    brify_description = models.CharField(verbose_name="Краткое описание", max_length=300, default="кр опис")
+    brify_description = models.CharField(verbose_name="Краткое описание", max_length=700, default="кр опис")
 
     def __str__(self):
         return f'{self.name} - {self.price}'
@@ -105,4 +105,5 @@ class Order(models.Model):
     class Meta:
         verbose_name = "Бронь"
         verbose_name_plural = "Заказы"
-# add model for user
+
+

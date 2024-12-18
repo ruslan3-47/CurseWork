@@ -1,6 +1,14 @@
-from django.urls import path
 
+from django.urls import path,include
 from .views import *
+from .viewsets import *
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'users',UsersViewSet,basename='users')
+router.register(r'rooms',RoomViewSet,basename='rooms')
+router.register(r'programs',ProgramViewSet,basename='programs')
+router.register(r'types',TypeViewSet,basename='types')
 
 urlpatterns = [
     path('mainpage/', Homepage.as_view(), name="mainpage"),
@@ -17,5 +25,16 @@ urlpatterns = [
     path ('user/',UsersHome.as_view(),name = 'usershome'),
     path('order/', OrderingProgram.as_view(),name = 'ordering'),
     path ('adminviews/',AdminViews.as_view(), name = 'admin'),
+    path ('EditUser/<int:pk>/',EditUser.as_view(),name = "edituser"),
+    path ('EditProgram/<int:pk>/',EditProgram.as_view(),name = "editprogram"),
+    path ('EditRoom/<int:pk>/',EditRoom.as_view(),name = "editroom"),
+    path ('EditType/<int:pk>/',EditType.as_view(),name = "edittype"),
+    path ('adminviews/CreateUser/', CreateUser.as_view(), name= "createuser"),
+    path('adminviews/CreateProgram/', CreateProgram.as_view(), name="createprogram"),
+    path('adminviews/CreateRoom/', CreateRoom.as_view(), name="createroom"),
+    path('adminviews/CreateType/', CreateType.as_view(), name="createtype"),
+    path('api/v1/', include(router.urls)),
+    path('api/v1/auth/', include('rest_framework.urls')),
+
     #homepage user
 ]

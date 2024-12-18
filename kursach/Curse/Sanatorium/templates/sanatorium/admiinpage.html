@@ -23,7 +23,7 @@
     <ul>
         <h2>Пользователи</h2>
         {%for user in user%}
-        <li>{{user.first_name}} {{user.last_name}}</li>
+        <li><a href="{% url 'edituser' user.id%}">{{user.first_name}} {{user.last_name}}</a></li>
         {%endfor%}
     </ul>
 </div>
@@ -31,7 +31,7 @@
     <ul>
         <h2>Программы</h2>
         {%for prog in program%}
-        <li>{{prog.name}} {{prog.price}}</li>
+        <li><a href="{% url 'editprogram' prog.id%}">{{prog.name}} {{prog.price}}</a></li>
         {%endfor%}
     </ul>
 </div>
@@ -39,7 +39,7 @@
 <ul>
     <h2>Комнаты</h2>
     {%for room in room%}
-    <li>{{room.pk}} {{room.type}}</li>
+    <li><a href="{% url 'editroom' room.id%}">{{room.pk}} {{room.type}}</a></li>
     {%endfor%}
 </ul>
 </div>
@@ -47,9 +47,15 @@
 <ul>
     <h2>Типы комнат</h2>
     {%for type in type%}
-        <li>{{type.name}} {{type.price}}</li>
+        <li><a href="{% url 'edittype' type.id%}">{{type.name}} {{type.price}}</a></li>
         {%endfor%}
 </ul>
 </div>
+</div>
+<div class = "buttoncreate">
+    <div class="createuser"><button><a href="{% url 'createuser' %}"><p>Создать</p></a></button></div>
+    <div class="createprogram"><button><a href="{% url 'createprogram' %}"><p>Создать</p></a></button></div>
+    <div class="createroom"><button><a href="{% url 'createroom'%}"><p>Создать</p></a></button></div>
+    <div class="createtype"><button><a href="{% url 'createtype' %}"><p>Создать</p></a></button></div>
 </div>
 {% endblock %}

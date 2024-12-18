@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, TemplateView, DetailView, UpdateView
 
 
-from .forms import RegisterUserForm, LoginUserForm, OrderingForm, ProfileEdit
+from .forms import *
 from .models import *
 from .utils import DataMixin
 from .filter import *
@@ -59,6 +59,7 @@ class Program_html(DataMixin,ListView):
     model = Program
     template_name = 'sanatorium/booking.html'
     context_object_name = 'program'
+    paginate_by = 3
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -221,3 +222,113 @@ class AdminViews(DataMixin,ListView):
         queryset = super().get_queryset()
         us_filter = UserFilter(self.request.GET,queryset)
         return us_filter.qs
+
+class EditUser(DataMixin,UpdateView):
+    model = Users
+    form_class = EditUser
+    template_name = "sanatorium/EditUser.html"
+    success_url =  reverse_lazy('admin')
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context, **c_def}
+
+
+class EditProgram(DataMixin,UpdateView):
+    model = Program
+    form_class = EditProgram
+    template_name = "sanatorium/EditProgram.html"
+    success_url = reverse_lazy('admin')
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context, **c_def}
+
+
+class EditRoom(DataMixin, UpdateView):
+    model = Room
+    form_class = EditRoom
+    template_name = "sanatorium/EditRoom.html"
+    success_url = reverse_lazy('admin')
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context, **c_def}
+
+
+class EditType(DataMixin, UpdateView):
+    model = Type
+    form_class = EditType
+    template_name = "sanatorium/EditType.html"
+    success_url = reverse_lazy('admin')
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context, **c_def}
+
+
+class CreateUser(DataMixin,CreateView):
+    model = Users
+    form_class = CreateUser
+    template_name = "sanatorium/createuser.html"
+    success_url =  reverse_lazy('admin')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context, **c_def}
+
+    def form_valid(self, form):
+        user = form.save()
+        Users.objects.create(user = user)
+        return redirect('admin')
+
+class CreateProgram(DataMixin,CreateView):
+    model = Program
+    form_class = CreateProgram
+    template_name = "sanatorium/createprogram.html"
+    success_url = reverse_lazy('admin')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context, **c_def}
+
+    def form_valid(self, form):
+        program = form.save()
+        Program.objects.create(program = program)
+        return redirect('admin')
+
+
+class CreateRoom(DataMixin, CreateView):
+    model = Room
+    form_class = CreateRoom
+    template_name = "sanatorium/createroom.html"
+    success_url = reverse_lazy('admin')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context, **c_def}
+
+    def form_valid(self, form):
+        room = form.save()
+        Room.objects.create(room = room)
+        return redirect('admin')
+
+
+class CreateType(DataMixin, CreateView):
+    model = Type
+    form_class = CreateType
+    template_name = "sanatorium/creattype.html"
+    success_url = reverse_lazy('admin')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context()
+        return {**context, **c_def}
+
+    def form_valid(self, form):
+        type = form.save()
+        Type.objects.create(type = type)
+        return redirect('admin')
